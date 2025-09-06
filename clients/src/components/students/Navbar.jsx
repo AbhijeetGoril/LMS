@@ -5,11 +5,12 @@ import { useClerk , UserButton, SignUpButton } from "@clerk/clerk-react";
 import { AppContext } from "../../contexts/Context";
 const Navbar = () => {
   const location = useLocation();
+  
   const isCourseList = location.pathname.includes("/course-list");
   const navigate= useNavigate()
   const { isSignedIn } = useClerk();
   const {isEducater} = useContext(AppContext)
-
+  
   return (
     <div
       className={`flex items-center justify-between px-4 sm:px-10 md:px-14  py-4 lg:px-36 border-b border-gray-500 ${
