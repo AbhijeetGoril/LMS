@@ -24,7 +24,7 @@ const App = () => {
   return (
     <div className="text-default min-h-screen bg-white">
       <Navbar />
-      <SyanUser />
+      {/* <SyanUser /> */}
 
       <Routes>
         {/* Public Routes */}

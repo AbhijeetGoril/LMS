@@ -9,10 +9,6 @@ const userSchema= new mongoose.Schema(
     enrolledCourses:[{
       type:mongoose.Schema.Types.ObjectId,
       ref:"Course"
-    }],
-    myCourses:[{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"Course"
     }]
   },
   { timestamps: true }
