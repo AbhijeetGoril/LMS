@@ -18,7 +18,7 @@ connectDB()
 // Routes
 
 app.get('/',(req,res)=>{
-  res.send('API WORKING')
+  res.send('API WORKINGs')
 })
 
 app.use("/clerk", express.json(),clerkWebhooks);

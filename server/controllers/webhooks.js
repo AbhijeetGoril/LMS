@@ -11,6 +11,8 @@ export const clerkWebhooks=async(req,res)=>{
         "svix-signature":req.headers["svix-signature"]
       })
       const {data,type}=payload
+      console.log("Clerk ID:", data.id);
+      console.log("Email:", data.email_addresses[0].email_address);
       switch(type){
         case 'user.created':{
           const userData={
