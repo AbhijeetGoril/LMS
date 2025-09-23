@@ -2,12 +2,16 @@ import { useEffect, useState } from "react"
 import { AppContext } from "./Context"
 import {  dummyCourses } from "../assets/assets"
 import humanizeDuration from  "humanize-duration"
+import {useAuth, useUser} from "@clerk/clerk-react"
 
 const AppContextProvider=({children})=>{
     const currency=import.meta.env.VITE_CURRENCY
     const [allCourses, setAllCourses] = useState([])
+    const {getToken}=useAuth()
+    const {user}=useUser()
     const [isEducater, isSetEducater] = useState(true)
     const [enrolledCourse,setEnrolledCourse ] = useState([])
+   
     const fatchAllCourses= async()=>{
         setAllCourses(dummyCourses )
     }
@@ -51,6 +55,15 @@ const AppContextProvider=({children})=>{
     const fatchErolledCourses= async()=>{
        setEnrolledCourse(dummyCourses)
     }
+    const logtoken = async ()=> {
+        console.log(await getToken())
+    } 
+    useEffect(()=>{
+        if(user){
+            logtoken()
+        }
+    },[user])
+
     useEffect(()=>{
         fatchAllCourses()
         fatchErolledCourses()   

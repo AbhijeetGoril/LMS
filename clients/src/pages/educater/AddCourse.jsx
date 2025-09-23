@@ -28,7 +28,7 @@ const AddCourse = () => {
           chapterId: uniqid(),
           chapterOrder:
             chapters.length > 0 ? chapters.slice(-1)[0].chapterOrder + 1 : 1,
-          colllabsed: false,
+          collapsed: false,
           chapterContent: [],
         };
         setChapters([...chapters, newChapter]);
@@ -36,11 +36,11 @@ const AddCourse = () => {
     }
   };
 
-  const handleColllabsed = (chapterId) => {
+  const handlecollapsed = (chapterId) => {
     setChapters(
       chapters.map((chapter) =>
         chapter.chapterId === chapterId
-          ? { ...chapter, colllabsed: !chapter.colllabsed }
+          ? { ...chapter, collapsed: !chapter.collapsed }
           : chapter
       )
     );
@@ -182,10 +182,10 @@ const AddCourse = () => {
                         <img
                           src={assets.dropdown_icon}
                           className={`w-4 ${
-                            chapter.colllabsed && "-rotate-180"
+                            chapter.collapsed && "-rotate-180"
                           } `}
                           onClick={() => {
-                            handleColllabsed(chapter.chapterId);
+                            handlecollapsed(chapter.chapterId);
                           }}
                         />
                         <span className="font-semibold truncate ">
@@ -202,7 +202,7 @@ const AddCourse = () => {
                       </div>
                     </div>
                   </div>
-                  {chapter.colllabsed && (
+                  {chapter.collapsed && (
                     <div className="border-t border-gray-500  py-5 px-3 ">
                       {chapter.chapterContent.map((lecture, lectureIndex) => {
                         return (
