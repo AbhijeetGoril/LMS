@@ -24,9 +24,9 @@ const Player = () => {
       <div className="py-4 sm:py-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36">
         {/* left column */}
         <div className="text-gray-800">
-          <h2 className="text-xl font-semibold ">Course Structre</h2>
+          <h2 className="text-xl font-semibold ">Course Structrue</h2>
           <div className="pt-5">
-            {enrolledCourseData.courseContent.map((chapter, index) => (
+            {enrolledCourseData.chapters?.map((chapter, index) => (
               <TutioralSection
                 chapter={chapter}
                 key={index}

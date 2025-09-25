@@ -3,10 +3,12 @@ import { useParams } from "react-router-dom";
 import { AppContext } from "../../contexts/Context";
 import Loading from "../../components/students/Loading";
 import { assets } from "../../assets/assets";
-import humanizeDuration from "humanize-duration";
+
 import TutioralSection from "../../components/students/TutioralSection";
 import Footer from "../../components/students/Footer";
 import YouTube from "react-youtube";
+import { toast } from "react-toastify"
+import API from "../../api/axios";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -16,25 +18,46 @@ const CourseDetails = () => {
   const {
     calculateRating,
     allCourses,
-    calcutateChapterTime,
     calcutateCourseTime,
     calcutateNoOfLecture,
     currency,
+    userData
   } = useContext(AppContext);
-
+  
   const [courseData, setCourseData] = useState(null);
 
   const fetchCourseData = async () => {
-    const tempData = allCourses.slice();
-
-    const data = tempData.find((Courses) => Courses._id === id);
-
-    setCourseData(data);
+   
+    try {
+      const {data}=await API.get(`course/${id}`)
+      console.log(data.success)
+      if(data.success){
+        setCourseData(data.courseData);
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+      console.log(error.message)
+    }
+    
+    
   };
 
+  const purchaseCourse=()=>{
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
+
   useEffect(() => {
+     if (userData?.enrolledCourses.includes(id)) {
+     setIsAlreadyEnrolled(true)
+   } 
     fetchCourseData();
-  }, [allCourses]);
+  }, [userData]);
 
   return courseData ? (
     <>
@@ -74,7 +97,7 @@ const CourseDetails = () => {
               {courseData.courseRatings.length > 1 ? "ratings" : "rating"}){" "}
             </p>
             <p className="">
-              {courseData.enrolledStudents.length}{" "}
+              {courseData.enrolledStudents?.length}{" "}
               {courseData.courseRatings.length > 1 ? "students" : "student"}{" "}
             </p>
           </div>
@@ -86,7 +109,7 @@ const CourseDetails = () => {
           <div className="pt-8 text-gray-800 ">
             <h2 className="text-xl font-semibold ">Course Structure</h2>
             <div className="pt-5">
-              {courseData.courseContent.map((chapter, index) => (
+              {courseData.chapters?.map((chapter, index) => (
                 <TutioralSection
                   chapter={chapter}
                   key={index}

@@ -31,48 +31,84 @@ export const userErolledCourses= async(req,res)=>{
   }
 }
 
-export const purchaseCourse= async(req,res)=>{
+export const purchaseCourse = async (req, res) => {
   try {
-    const {courseId}=req.body
-    const {origin}=req.headers
-    const {userId}=await getAuth(req)
-    const userData = await User.findOne({ clerkId: userId })
+    const { courseId } = req.body;
+    const { origin } = req.headers;
+    const { userId } = await getAuth(req);
 
-    const courseData=await Course.findById(courseId)
-    if(!userData || !courseData ){
-      return res.json({success:false,message:"Data not found"})
+    // Find user and course
+    const userData = await User.findOne({ clerkId: userId });
+    const courseData = await Course.findById(courseId);
+
+    if (!userData || !courseData) {
+      return res.json({ success: false, message: "Data not found" });
     }
-    const purchaseData={
-      courseId:courseData._id,
+
+    // ✅ Prevent educator from buying their own course
+    if (courseData.educator?.toString() === userData._id.toString()) {
+      return res.json({
+        success: false,
+        message: "Educators cannot purchase their own course",
+      });
+    }
+
+    // ✅ Check if user already purchased this course
+    const existingPurchase = await Purchase.findOne({
+      courseId: courseData._id,
+      userId, // clerkId saved in purchase
+    });
+
+    if (existingPurchase) {
+      return res.json({
+        success: false,
+        message: "You have already purchased this course",
+      });
+    }
+
+    // Calculate amount
+    const amount =
+      courseData.coursePrice -
+      (courseData.discount * courseData.coursePrice) / 100;
+
+    // Save as string (since your schema has string)
+    const newPurchase = await Purchase.create({
+      courseId: courseData._id,
       userId,
-      amount:(courseData.coursePrice-((courseData.discount* courseData.coursePrice)/100)).toFixed(2)
-    }
-    const newPurchase=await Purchase.create(purchaseData)
-    
-    const stripeInstance= new Stripe(process.env.STRIPE_SECRET_KEY)
-    const currency= process.env.CURRENCY.toLowerCase()
-    const line_Items=[{
-      price_data:{
-        currency,
-        product_data:{
-          name:courseData.courseTitle,
+      amount: amount.toFixed(2),
+    });
+
+    const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const currency = process.env.CURRENCY.toLowerCase();
+
+    const line_items = [
+      {
+        price_data: {
+          currency,
+          product_data: {
+            name: courseData.courseTitle,
+          },
+          unit_amount: Math.round(Number(newPurchase.amount) * 100),
         },
-        unit_amount:Math.floor(newPurchase.amount)*100
+        quantity: 1,
       },
-      quantity:1
-    }]
-    const session= await stripeInstance.checkout.sessions.create({
-      success_url:`${origin}/loading/my-enrollments`,
-      cancel_url:`${origin}/`,
-      line_items:line_Items,
-      mode:"payment",
-      metadata:{purchaseId:newPurchase._id.toString()}
-    })
-    res.json({success:true,session_url:session.url})
+    ];
+
+    const session = await stripeInstance.checkout.sessions.create({
+      success_url: `${origin}/loading/my-enrollments`,
+      cancel_url: `${origin}/`,
+      line_items,
+      mode: "payment",
+      metadata: { purchaseId: newPurchase._id.toString() },
+    });
+
+    res.json({ success: true, session_url: session.url });
   } catch (error) {
-    res.json({success:false,message:error.message})
+    console.error("Purchase Error:", error);
+    res.json({ success: false, message: error.message });
   }
-}
+};
+
 
 export const updateUserCourseProgress=async (req,res)=>{
   try {

@@ -17,15 +17,16 @@ import StudentsEroll from "./pages/educater/StudentsEroll";
 
 import Navbar from "./components/students/Navbar";
 import SyanUser from "./contexts/SyanUser";
-
+import {ToastContainer} from "react-toastify"
 import "quill/dist/quill.snow.css";
 
 const App = () => {
   return (
     <div className="text-default min-h-screen bg-white">
+      <ToastContainer/>
       <Navbar />
       {/* <SyanUser /> */}
-
+      
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />

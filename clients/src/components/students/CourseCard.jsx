@@ -10,7 +10,7 @@ const CourseCard = ({ course }) => {
     course.coursePrice -
     (course.discount * course.coursePrice) / 100
   ).toFixed(2);
-
+  
   return (
     <Link
       to={`/course/${course._id}`}
@@ -25,7 +25,7 @@ const CourseCard = ({ course }) => {
 
       <div className="p-4 space-y-1 text-left">
         <h3 className="text-base font-semibold text-gray-800 line-clamp-2">{course.courseTitle}</h3>
-        <p className="text-sm text-gray-500">Abhijeet</p>
+        <p className="text-sm text-gray-500">{course.educator.name}</p>
 
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <p className="font-medium">{rating}</p>
